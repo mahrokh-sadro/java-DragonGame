@@ -31,11 +31,11 @@ public class GameStateManager {
 		
 	}
 	
-	private void update() {
+	public void update() {
 		
 		m_gameStates.get(m_gameStates).update();
 	}
-	private void draw(java.awt.Graphics2D g) {
+	public void draw(java.awt.Graphics2D g) {
 		
 		m_gameStates.get(m_gameStates).draw(g);
 

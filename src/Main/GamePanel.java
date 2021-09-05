@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import GameState.GameStateManager;
+
 
 public class GamePanel extends JFrame implements Runnable, KeyListener {
 
@@ -24,6 +26,20 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 	private BufferedImage m_image;
 	private Graphics2D m_g2d;
 
+	//game state manager
+	
+	private GameStateManager m_gameStateManager;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public GamePanel() {
 		super();
 		setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
@@ -47,6 +63,7 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 		m_g2d=(Graphics2D) m_g2d;//?????
 		m_isRunning=true;
 		
+		m_gameStateManager=new GameStateManager();
 	}
 	
 	
@@ -83,8 +100,14 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 		}
 	}
 
-	private void update() {}
-	private void draw() {}
+	private void update() {
+		
+		m_gameStateManager.update();
+	}
+	private void draw() {
+		
+		m_gameStateManager.draw(m_g2d);
+	}
 	private void drawToScreen() {
 		
 		Graphics g2=getGraphics();
@@ -96,14 +119,15 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 	
 	
 	public void keyTyped(KeyEvent key) {
-
 	}
 
 	public void keyPressed(KeyEvent key) {
+		m_gameStateManager.keyPressed(key.getKeyCode());
 
 	}
 
 	public void keyReleased(KeyEvent key) {
+		m_gameStateManager.keyReleased(key.getKeyCode());
 
 	}
 
