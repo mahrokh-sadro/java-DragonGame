@@ -5,11 +5,12 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import GameState.GameStateManager;
 
 
-public class GamePanel extends JFrame implements Runnable, KeyListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener {
 
 	// dimentions
 	public static final int WIDTH = 320;
@@ -29,16 +30,6 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 	//game state manager
 	
 	private GameStateManager m_gameStateManager;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public GamePanel() {
 		super();
@@ -60,7 +51,7 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 		
 		m_image=new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB );
 				
-		m_g2d=(Graphics2D) m_g2d;//?????
+		m_g2d=(Graphics2D) m_image.getGraphics();//?????
 		m_isRunning=true;
 		
 		m_gameStateManager=new GameStateManager();
@@ -90,7 +81,7 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 			elapsed=System.nanoTime()-start;
 			
 			wait=m_targetTime-elapsed/1000000;
-			
+			if(wait<0) wait=1;
 			try {
 				Thread.sleep(wait);
 			} catch (InterruptedException e) {
@@ -111,7 +102,7 @@ public class GamePanel extends JFrame implements Runnable, KeyListener {
 	private void drawToScreen() {
 		
 		Graphics g2=getGraphics();
-		g2.drawImage(m_image,0,0,null);
+		g2.drawImage(m_image,0,0,WIDTH*SCALE,HEIGHT*SCALE  ,null);
 		g2.dispose();
 	}
 

@@ -3,7 +3,6 @@ package GameState;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import sun.jvm.hotspot.oops.java_lang_Class;
 
 public class GameStateManager {
 
@@ -33,21 +32,21 @@ public class GameStateManager {
 	
 	public void update() {
 		
-		m_gameStates.get(m_gameStates).update();
+		m_gameStates.get(m_currentState).update();
 	}
 	public void draw(java.awt.Graphics2D g) {
 		
-		m_gameStates.get(m_gameStates).draw(g);
+		m_gameStates.get(m_currentState).draw(g);
 
 	}
 	
 	public void keyPressed(int k) {
-		m_gameStates.get(m_gameStates).keyPressed(k);
+		m_gameStates.get(m_currentState).keyPressed(k);
 
 	}
 
 	public void keyReleased(int k) {
-		m_gameStates.get(m_gameStates).keyReleased(k);
+		m_gameStates.get(m_currentState).keyReleased(k);
 
 	}
 	
