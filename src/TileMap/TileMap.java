@@ -1,6 +1,9 @@
 package TileMap;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -44,12 +47,17 @@ public class TileMap {
 		m_tileSize = tileSize;
 		m_rowsToDraw = GamePanel.HEIGHT / tileSize + 2;
 		m_colsToDraw = GamePanel.WIDTH / tileSize + 2;
-
+		m_tween = 0.07;
 	}
 
 	public void loadTiles(String s) {
 
-		m_tileSet = ImageIO.read(getClass().getResourceAsStream(s));
+		try {
+			m_tileSet = ImageIO.read(getClass().getResourceAsStream(s));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		m_numOfTilesAcross = m_tileSet.getWidth() / m_tileSize;
 		m_tiles = new Tile[2][m_numOfTilesAcross];
 
@@ -57,9 +65,9 @@ public class TileMap {
 		for (int col = 0; col < m_numOfTilesAcross; col++) {
 
 			m_suBufferedImage = m_tileSet.getSubimage(col * m_tileSize, 0, m_tileSize, m_tileSize);
-			m_tiles[0][col] = new TileMap(m_suBufferedImage, Tile.NORMAL);
+			m_tiles[0][col] = new Tile(m_suBufferedImage, Tile.NORMAL);
 			m_suBufferedImage = m_tileSet.getSubimage(col * m_tileSize, m_tileSize, m_tileSize, m_tileSize);
-			m_tiles[0][col] = new TileMap(m_suBufferedImage, Tile.BLOCKED);
+			m_tiles[0][col] = new Tile(m_suBufferedImage, Tile.BLOCKED);
 
 	
 		
@@ -69,6 +77,87 @@ public class TileMap {
 
 	public void loadMap(String s) {
 
+		InputStream input=getClass().getResourceAsStream(s);
+		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(input));
+		
+		m_numOfCols=Integer.parseInt(bufferedReader.readLine());
+		m_numOfRows=Integer.parseInt(bufferedReader.readLine());
+		m_map=new int[m_numOfRows][m_numOfCols];
+			
+		m_width=m_numOfCols*m_tileSize;
+		m_height=m_numOfRows*m_tileSize;
+		
+		String delims = "\\s+";
+		
+		for(int row=0;row<m_numOfRows;row++) {
+			String lineString=bufferedReader.readLine();
+			String[] tokens=lineString.split(delims);
+			for(int col=0;col<m_numOfCols;col++)
+				m_map[row][col]=Integer.parseInt(tokens[col]);
+		}
+		
+		
+		
+		
 	}
+
+	public double getx() {
+		return m_x;
+	}
+
+	
+
+	public double gety() {
+		return m_y;
+	}
+
+	
+	public int getTileSize() {
+		return m_tileSize;
+	}
+
+	
+
+	public int getWidth() {
+		return m_width;
+	}
+
+	
+
+	public int getHeight() {
+		return m_height;
+	}
+
+	public int getType(int row, int col) {
+		int rc = m_map[row][col];
+		int r = rc / m_numOfTilesAcross;
+		int c = rc % m_numOfTilesAcross;
+		return m_tiles[r][c].getType();
+	}
+	
+	
+public void setPosition(double x, double y) {
+		
+		m_x += (x - m_x) * m_tween;
+		m_y += (y - m_y) * m_tween;
+		
+		fixBounds();
+		
+		m_colsOffset = (int)-	m_x  / m_tileSize;
+		m_rowsOffset = (int)-	m_y / m_tileSize;
+		
+	}
+	
+	
+private void fixBounds() {
+	if(m_x < m_xmin) m_x = m_xmin;
+	if(m_y < m_ymin) m_y = m_ymin;
+	if(m_x > m_xmax) m_x = m_xmax;
+	if(m_y > m_ymax) m_y = m_ymax;
+}
+
+	
+	
+	
 
 }
