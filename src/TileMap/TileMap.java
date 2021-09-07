@@ -1,9 +1,11 @@
 package TileMap;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
@@ -69,60 +71,74 @@ public class TileMap {
 			m_suBufferedImage = m_tileSet.getSubimage(col * m_tileSize, m_tileSize, m_tileSize, m_tileSize);
 			m_tiles[0][col] = new Tile(m_suBufferedImage, Tile.BLOCKED);
 
-	
-		
 		}
 
 	}
 
 	public void loadMap(String s) {
 
-		InputStream input=getClass().getResourceAsStream(s);
-		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(input));
-		
-		m_numOfCols=Integer.parseInt(bufferedReader.readLine());
-		m_numOfRows=Integer.parseInt(bufferedReader.readLine());
-		m_map=new int[m_numOfRows][m_numOfCols];
-			
-		m_width=m_numOfCols*m_tileSize;
-		m_height=m_numOfRows*m_tileSize;
-		
-		String delims = "\\s+";
-		
-		for(int row=0;row<m_numOfRows;row++) {
-			String lineString=bufferedReader.readLine();
-			String[] tokens=lineString.split(delims);
-			for(int col=0;col<m_numOfCols;col++)
-				m_map[row][col]=Integer.parseInt(tokens[col]);
+		InputStream input = getClass().getResourceAsStream(s);
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(input));
+
+		try {
+			m_numOfCols = Integer.parseInt(bufferedReader.readLine());
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
-		
-		
+		try {
+			m_numOfRows = Integer.parseInt(bufferedReader.readLine());
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		m_map = new int[m_numOfRows][m_numOfCols];
+
+		m_width = m_numOfCols * m_tileSize;
+		m_height = m_numOfRows * m_tileSize;
+
+		String delims = "\\s+";
+
+		String lineString;
+		for (int row = 0; row < m_numOfRows; row++) {
+
+			try {
+				lineString = bufferedReader.readLine();
+				String[] tokens = lineString.split(delims);
+				for (int col = 0; col < m_numOfCols; col++)
+					m_map[row][col] = Integer.parseInt(tokens[col]);
+
+			}
+
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 
 	public double getx() {
 		return m_x;
 	}
 
-	
-
 	public double gety() {
 		return m_y;
 	}
 
-	
 	public int getTileSize() {
 		return m_tileSize;
 	}
 
-	
-
 	public int getWidth() {
 		return m_width;
 	}
-
-	
 
 	public int getHeight() {
 		return m_height;
@@ -134,30 +150,55 @@ public class TileMap {
 		int c = rc % m_numOfTilesAcross;
 		return m_tiles[r][c].getType();
 	}
-	
-	
-public void setPosition(double x, double y) {
-		
+
+	public void setPosition(double x, double y) {
+
 		m_x += (x - m_x) * m_tween;
 		m_y += (y - m_y) * m_tween;
-		
-		fixBounds();
-		
-		m_colsOffset = (int)-	m_x  / m_tileSize;
-		m_rowsOffset = (int)-	m_y / m_tileSize;
-		
-	}
-	
-	
-private void fixBounds() {
-	if(m_x < m_xmin) m_x = m_xmin;
-	if(m_y < m_ymin) m_y = m_ymin;
-	if(m_x > m_xmax) m_x = m_xmax;
-	if(m_y > m_ymax) m_y = m_ymax;
-}
 
-	
-	
-	
+		fixBounds();
+
+		m_colsOffset = (int) -m_x / m_tileSize;
+		m_rowsOffset = (int) -m_y / m_tileSize;
+
+	}
+
+	private void fixBounds() {
+		if (m_x < m_xmin)
+			m_x = m_xmin;
+		if (m_y < m_ymin)
+			m_y = m_ymin;
+		if (m_x > m_xmax)
+			m_x = m_xmax;
+		if (m_y > m_ymax)
+			m_y = m_ymax;
+	}
+
+	public void draw(Graphics2D g, int numColsToDraw) {
+
+		for (int row = m_rowsOffset; row < m_rowsOffset + m_rowsToDraw; row++) {
+
+			if (row >= m_numOfRows)
+				break;
+
+			for (int col = m_colsOffset; col < m_colsOffset + numColsToDraw; col++) {
+
+				if (col >= m_numOfCols)
+					break;
+
+				if (m_map[row][col] == 0)
+					continue;
+
+				int rc = m_map[row][col];
+				int r = rc / m_numOfTilesAcross;
+				int c = rc % m_numOfTilesAcross;
+
+				g.drawImage(m_tiles[r][c].getImage(), (int) m_x + col * m_tileSize, (int) m_y + row * m_tileSize, null);
+
+			}
+
+		}
+
+	}
 
 }
